@@ -36,9 +36,12 @@ Matrix Matrix::diagonal(const std::vector<double>& diag) {
 }
 
 void Matrix::print() const {
+    std::cout << std::fixed << std::setprecision(4);
     for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++)
-            std::cout << data[i][j] << "\t";
-        std::cout << std::endl;
+        std::cout << "| ";
+        for (int j = 0; j < cols; j++) {
+            std::cout << std::setw(10) << data[i][j] << " ";
+        }
+        std::cout << "|\n";
     }
 }

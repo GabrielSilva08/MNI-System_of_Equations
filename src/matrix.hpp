@@ -40,11 +40,31 @@ public:
         (int): Número de colunas
     */
 
+    // Operadores de acesso aos elementos da matriz -> A(i, j)
     double& operator()(int i, int j);
     double operator()(int i, int j) const;
 
     static Matrix identity(int n);
+    /* 
+    Inicializa e retorna uma matriz identidade de ordem n
+
+    Args:
+        (int) n: Dimensão da matriz
+
+    Returns: 
+        (Matrix): Matriz I nxn
+    */
+
     static Matrix diagonal(const std::vector<double>& diag);
+    /* 
+    Inicializa e retorna uma matriz diagonal com os elementos passados.
+
+    Args:
+        (const std::vector<double>&) diag: Vetor de elementos que irão compor a diagonal.
+
+    Returns: 
+        (Matrix): Matriz diagonal
+    */
 
     void print() const;
 };

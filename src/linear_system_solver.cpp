@@ -1,12 +1,6 @@
 #include "linear_system_solver.hpp"
 
-// =======================
-// Substituições
-// =======================
-
-std::vector<double> LinearSystemSolver::forwardSubstitution(
-    const Matrix& L, const std::vector<double>& b) {
-
+std::vector<double> forwardSubstitution(const Matrix& L, const std::vector<double>& b){
     int n = b.size();
     std::vector<double> y(n, 0.0);
 
@@ -16,12 +10,11 @@ std::vector<double> LinearSystemSolver::forwardSubstitution(
             sum += L(i, j) * y[j];
         y[i] = b[i] - sum;
     }
+
     return y;
 }
 
-std::vector<double> LinearSystemSolver::backwardSubstitution(
-    const Matrix& U, const std::vector<double>& y) {
-
+std::vector<double> backwardSubstitution(const Matrix& U, const std::vector<double>& y){
     int n = y.size();
     std::vector<double> x(n, 0.0);
 
@@ -31,16 +24,12 @@ std::vector<double> LinearSystemSolver::backwardSubstitution(
             sum += U(i, j) * x[j];
         x[i] = (y[i] - sum) / U(i, i);
     }
+
     return x;
 }
 
-// =======================
-// Fatoração LU
-// =======================
-
-void LinearSystemSolver::decomposeLU(const Matrix& A, Matrix& L, Matrix& U) {
+void decomposeLU(const Matrix& A, Matrix& L, Matrix& U){
     int n = A.getRows();
-
     L = Matrix::identity(n);
     U = Matrix(n, n);
 
@@ -61,20 +50,12 @@ void LinearSystemSolver::decomposeLU(const Matrix& A, Matrix& L, Matrix& U) {
     }
 }
 
-std::vector<double> LinearSystemSolver::solveLU(
-    const Matrix& L, const Matrix& U, const std::vector<double>& f) {
-
+std::vector<double> solveLU(const Matrix& L, const Matrix& U, const std::vector<double>& f){
     std::vector<double> y = forwardSubstitution(L, f);
     return backwardSubstitution(U, y);
 }
 
-// =======================
-// Fatoração LDP
-// =======================
-
-void LinearSystemSolver::decomposeLDP(
-    const Matrix& A, Matrix& L, Matrix& D, Matrix& P) {
-
+void decomposeLDP(const Matrix& A, Matrix& L, Matrix& D, Matrix& P){
     int n = A.getRows();
     Matrix U(n, n);
     decomposeLU(A, L, U);
@@ -92,10 +73,7 @@ void LinearSystemSolver::decomposeLDP(
                 P(i, j) = U(i, j) / diag[i];
 }
 
-std::vector<double> LinearSystemSolver::solveLDP(
-    const Matrix& L, const Matrix& D,
-    const Matrix& P, const std::vector<double>& f) {
-
+std::vector<double> solveLDP(const Matrix& L, const Matrix& D, const Matrix& P, const std::vector<double>& f){
     std::vector<double> y = forwardSubstitution(L, f);
 
     int n = y.size();

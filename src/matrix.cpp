@@ -4,10 +4,15 @@ Matrix::Matrix(int r, int c) : rows(r), cols(c) {
     data.resize(r, std::vector<double>(c, 0.0));
 }
 
-int Matrix::getRows() const { return rows; }
-int Matrix::getCols() const { return cols; }
+int Matrix::getRows() const { 
+    return rows; 
+}
 
-double& Matrix::operator()(int i, int j) {
+int Matrix::getCols() const { 
+    return cols; 
+}
+
+double& Matrix::operator()(int i, int j){
     return data[i][j];
 }
 

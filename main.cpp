@@ -6,6 +6,10 @@
 #include "src/matrix.hpp"
 #include "src/linear_system_solver.hpp"
 
+// TODO: 
+// 1. MOSTRAR QUAIS CONEXÕES ROMPERAM
+// 2. TRATAR CASOS EM QUE Determinante = 0 OU QUANDO TEMOS INFINITAS SOLUÇÕES
+
 using namespace std;
 
 // Utilitários de interface

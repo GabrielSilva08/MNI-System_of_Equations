@@ -150,7 +150,7 @@ void solveSystem(){
             cout << "d" << i + 1 << " = " << dLU[i] << " |d| = " << abs(dLU[i]);
             if (abs(dLU[i]) > 2.0){
                 explodeLU = true;
-                cout << " -> Deslocamento " << i << " passou do limite maximo!";
+                cout << " -> Deslocamento " << i+1 << " passou do limite maximo!";
             }
             cout <<  "\n";
         }
@@ -162,7 +162,7 @@ void solveSystem(){
             cout << "d" << i + 1 << " = " << dLDP[i] << " |d| = " << abs(dLDP[i]);
             if (abs(dLDP[i]) > 2.0){
                 explodeLDP = true;
-                cout << " -> Deslocamento " << i << " passou do limite maximo!";
+                cout << " -> Deslocamento " << i+1 << " passou do limite maximo!";
             }
             cout <<  "\n";
         }
@@ -172,7 +172,7 @@ void solveSystem(){
 }
 
 int main() {
-
+    cout << fixed << setprecision(4);
     // Main loop
     do {
         clearScreen();

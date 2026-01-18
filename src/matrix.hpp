@@ -68,6 +68,8 @@ public:
     */
 
     void print() const;
+
+    double determinant() const;
 };
 
 #endif

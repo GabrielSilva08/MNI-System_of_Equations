@@ -36,11 +36,143 @@ void printVector(const vector<double>& v, const string& name) {
 
 // Programa principal
 
+int n = 0, option;
+Matrix A(1, 1);
+vector<double> f;
+bool dataLoaded = false;
+
+
+void insertMatrixAandVectorf(){
+    clearScreen();
+    cout << "=========== INSERCAO DE DADOS ===========\n\n";
+    cout << "Digite o numero de deslocamentos n (d1, d2, ..., dn): ";
+    cin >> n;
+
+    A = Matrix(n, n);
+    f.resize(n);
+
+    do{
+    cout << "\nDigite os elementos da matriz A:\n";
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cin >> A(i, j);
+    
+    if(A.determinant() == 0){
+        cout<< "\nO determinante da matriz de parametros nao pode ser igual a 0, por favor insira outra matriz.";
+    }
+    } while(A.determinant() == 0);
+
+    cout << "\nDigite os elementos do vetor f:\n";
+    for (int i = 0; i < n; i++)
+        cin >> f[i];
+
+    dataLoaded = true;
+    waitForUser();
+}
+
+void viewMatrixA(){
+    clearScreen();
+    if (!dataLoaded) {
+        cout << "Nenhuma matriz carregada! Inicialize seus elementos.\n";
+    } else {
+        cout << "=========== MATRIZ A ===========\n\n";
+        A.print();
+    }
+    waitForUser();
+}
+
+void viewVectorf(){
+    clearScreen();
+    if (!dataLoaded) {
+        cout << "Nenhum vetor carregado! Inicialize seus elementos.\n";
+    } else {
+        cout << "=========== VETOR f ===========\n\n";
+        printVector(f, "f^T");
+    }
+    waitForUser();
+}
+
+
+
+void showLUDecomposition(){
+    clearScreen();
+    if (!dataLoaded) {
+        cout << "Nenhuma matriz carregada! Inicialize seus elementos.\n";
+    } else {
+        Matrix L(n, n), U(n, n);
+        decomposeLU(A, L, U);
+
+        cout << "========== DECOMPOSICAO LU ==========\n\n";
+        cout << "Matriz L:\n";
+        L.print();
+        cout << "\nMatriz U:\n";
+        U.print();
+    }
+    waitForUser();
+}
+
+void showLDPDecomposition(){
+    clearScreen();
+    if (!dataLoaded) {
+        cout << "Nenhuma matriz carregada! Inicialize seus elementos.\n";
+    } else {
+        Matrix L(n, n), D(n, n), P(n, n);
+        decomposeLDP(A, L, D, P);
+
+        cout << "========== DECOMPOSICAO LDP ==========\n\n";
+        cout << "Matriz L:\n";
+        L.print();
+        cout << "\nMatriz D:\n";
+        D.print();
+        cout << "\nMatriz P:\n";
+        P.print();
+    }
+    waitForUser();
+}
+
+void solveSystem(){
+    clearScreen();
+    if (!dataLoaded){
+        cout << "\n>>> Nenhuma matriz carregada! Inicialize seus elementos.\n";
+    }else{
+        cout << "========== ANALISE DO JATO ==========\n\n";
+        Matrix Lr(n, n), Ur(n, n);
+        decomposeLU(A, Lr, Ur);
+        vector<double> dLU = solveLU(Lr, Ur, f);
+
+        Matrix Lr2(n, n), Dr(n, n), Pr(n, n);
+        decomposeLDP(A, Lr2, Dr, Pr);
+        vector<double> dLDP = solveLDP(Lr2, Dr, Pr, f);
+
+        cout << "\n====== SOLUCAO PELO METODO LU =====\n";
+        bool explodeLU = false;
+        for (int i = 0; i < n; i++){
+            cout << "d" << i + 1 << " = " << dLU[i] << " |d| = " << abs(dLU[i]);
+            if (abs(dLU[i]) > 2.0){
+                explodeLU = true;
+                cout << " -> Deslocamento " << i << " passou do limite maximo!";
+            }
+            cout <<  "\n";
+        }
+        cout << (explodeLU ? ">>> JATO EXPLODE (LU)\n" : ">>> JATO ESTAVEL (LU)\n");
+
+        cout << "\n===== SOLUCAO PELO METODO LDP =====\n";
+        bool explodeLDP = false;
+        for (int i = 0; i < n; i++) {
+            cout << "d" << i + 1 << " = " << dLDP[i] << " |d| = " << abs(dLDP[i]);
+            if (abs(dLDP[i]) > 2.0){
+                explodeLDP = true;
+                cout << " -> Deslocamento " << i << " passou do limite maximo!";
+            }
+            cout <<  "\n";
+        }
+        cout << (explodeLDP ? ">>> JATO EXPLODE (LDP)\n" : ">>> JATO ESTAVEL (LDP)\n");
+    }
+    waitForUser();
+}
+
 int main() {
-    int n = 0, option;
-    Matrix A(1, 1);
-    vector<double> f;
-    bool dataLoaded = false;
+
     // Main loop
     do {
         clearScreen();
@@ -61,118 +193,27 @@ int main() {
 
         switch (option){
             case 1: 
-                clearScreen();
-                cout << "=========== INSERCAO DE DADOS ===========\n\n";
-                cout << "Digite o numero de deslocamentos n (d1, d2, ..., dn): ";
-                cin >> n;
-
-                A = Matrix(n, n);
-                f.resize(n);
-
-                cout << "\nDigite os elementos da matriz A:\n";
-                for (int i = 0; i < n; i++)
-                    for (int j = 0; j < n; j++)
-                        cin >> A(i, j);
-
-                cout << "\nDigite os elementos do vetor f:\n";
-                for (int i = 0; i < n; i++)
-                    cin >> f[i];
-
-                dataLoaded = true;
-                waitForUser();
+                insertMatrixAandVectorf();
                 break;
 
             case 2:
-                clearScreen();
-                if (!dataLoaded) {
-                    cout << "Nenhuma matriz carregada! Inicialize seus elementos.\n";
-                } else {
-                    cout << "=========== MATRIZ A ===========\n\n";
-                    A.print();
-                }
-                waitForUser();
+                viewMatrixA();
                 break;
 
             case 3:
-                clearScreen();
-                if (!dataLoaded) {
-                    cout << "Nenhum vetor carregado! Inicialize seus elementos.\n";
-                } else {
-                    cout << "=========== VETOR f ===========\n\n";
-                    printVector(f, "f^T");
-                }
-                waitForUser();
+                viewVectorf();
                 break;
 
             case 4:
-                clearScreen();
-                if (!dataLoaded) {
-                    cout << "Nenhuma matriz carregada! Inicialize seus elementos.\n";
-                } else {
-                    Matrix L(n, n), U(n, n);
-                    decomposeLU(A, L, U);
-
-                    cout << "========== DECOMPOSICAO LU ==========\n\n";
-                    cout << "Matriz L:\n";
-                    L.print();
-                    cout << "\nMatriz U:\n";
-                    U.print();
-                }
-                waitForUser();
+                showLUDecomposition();
                 break;
 
             case 5:
-                clearScreen();
-                if (!dataLoaded) {
-                    cout << "Nenhuma matriz carregada! Inicialize seus elementos.\n";
-                } else {
-                    Matrix L(n, n), D(n, n), P(n, n);
-                    decomposeLDP(A, L, D, P);
-
-                    cout << "========== DECOMPOSICAO LDP ==========\n\n";
-                    cout << "Matriz L:\n";
-                    L.print();
-                    cout << "\nMatriz D:\n";
-                    D.print();
-                    cout << "\nMatriz P:\n";
-                    P.print();
-                }
-                waitForUser();
+                showLDPDecomposition();
                 break;
 
             case 6:
-                clearScreen();
-                if (!dataLoaded){
-                    cout << "\n>>> Nenhuma matriz carregada! Inicialize seus elementos.\n";
-                }else{
-                    cout << "========== ANALISE DO JATO ==========\n\n";
-                    Matrix Lr(n, n), Ur(n, n);
-                    decomposeLU(A, Lr, Ur);
-                    vector<double> dLU = solveLU(Lr, Ur, f);
-
-                    Matrix Lr2(n, n), Dr(n, n), Pr(n, n);
-                    decomposeLDP(A, Lr2, Dr, Pr);
-                    vector<double> dLDP = solveLDP(Lr2, Dr, Pr, f);
-
-                    cout << "\n====== SOLUCAO PELO METODO LU =====\n";
-                    bool explodeLU = false;
-                    for (int i = 0; i < n; i++){
-                        cout << "d" << i + 1 << " = " << dLU[i] << " |d| = " << abs(dLU[i]) << "\n";
-                        if (abs(dLU[i]) > 2.0)
-                            explodeLU = true;
-                    }
-                    cout << (explodeLU ? ">>> JATO EXPLODE (LU)\n" : ">>> JATO ESTAVEL (LU)\n");
-
-                    cout << "\n===== SOLUCAO PELO METODO LDP =====\n";
-                    bool explodeLDP = false;
-                    for (int i = 0; i < n; i++) {
-                        cout << "d" << i + 1 << " = " << dLDP[i] << " |d| = " << abs(dLDP[i]) << "\n";
-                        if (abs(dLDP[i]) > 2.0)
-                            explodeLDP = true;
-                    }
-                    cout << (explodeLDP ? ">>> JATO EXPLODE (LDP)\n" : ">>> JATO ESTAVEL (LDP)\n");
-                }
-                waitForUser();
+                solveSystem();
                 break;
 
             case 0:

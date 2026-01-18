@@ -45,3 +45,15 @@ void Matrix::print() const {
         std::cout << "|\n";
     }
 }
+
+double Matrix::determinant() const {
+    double diagonal_sum = 0;
+
+    for (int i = 0; i < rows; i++){
+        diagonal_sum += data[i][i];
+    }
+
+    if(std::abs(diagonal_sum) < 1e-9) return 0;
+
+    return diagonal_sum;
+}
